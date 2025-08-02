@@ -511,8 +511,8 @@ export default function Home() {
                 "Excelente trabalho! O portão ficou perfeito e a equipe foi muito profissional."
               </p>
               <div>
-                <p className="text-yellow-400 font-semibold">João Silva</p>
-                <p className="text-yellow-400/60 text-sm">São Paulo, SP</p>
+                <p className="text-yellow-400 font-semibold">Magali Marinho</p>
+                <p className="text-yellow-400/60 text-sm">Avanhandava, SP</p>
               </div>
             </div>
 
@@ -526,8 +526,8 @@ export default function Home() {
                 "Contratei para alugar containers e fiquei muito satisfeito com a qualidade."
               </p>
               <div>
-                <p className="text-yellow-400 font-semibold">Maria Santos</p>
-                <p className="text-yellow-400/60 text-sm">Campinas, SP</p>
+                <p className="text-yellow-400 font-semibold">João Spina</p>
+                <p className="text-yellow-400/60 text-sm">Penápolis, SP</p>
               </div>
             </div>
 
@@ -541,8 +541,8 @@ export default function Home() {
                 "Estrutura metálica de primeira qualidade. Recomendo para todos!"
               </p>
               <div>
-                <p className="text-yellow-400 font-semibold">Carlos Oliveira</p>
-                <p className="text-yellow-400/60 text-sm">Santos, SP</p>
+                <p className="text-yellow-400 font-semibold">Tamara Cristina</p>
+                <p className="text-yellow-400/60 text-sm">Avanhandava, SP</p>
               </div>
             </div>
           </div>
