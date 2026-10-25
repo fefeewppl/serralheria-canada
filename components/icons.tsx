@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export function WhatsAppIcon({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" className={className}>
@@ -9,9 +11,14 @@ export function WhatsAppIcon({ className }: { className?: string }) {
 export function Logo({ compact = false }: { compact?: boolean }) {
   return (
     <span className="flex items-center gap-3">
-      <span className="grid h-11 w-11 shrink-0 place-items-center border-2 border-amber font-display text-xl font-bold text-amber">
-        SC
-      </span>
+      <Image
+        src="/logo.webp"
+        alt=""
+        width={48}
+        height={48}
+        priority
+        className="h-12 w-12 shrink-0 rounded-md ring-1 ring-amber/60"
+      />
       {!compact && (
         <span className="leading-none">
           <span className="block font-display text-[22px] font-bold uppercase tracking-wide text-white">

@@ -19,6 +19,8 @@ export default async function OpengraphImage() {
   const font = await loadFont();
   const photo = await readFile(join(process.cwd(), "public/portoes/portao6.jpg"));
   const photoSrc = `data:image/jpeg;base64,${photo.toString("base64")}`;
+  const logo = await readFile(join(process.cwd(), "app/icon.png"));
+  const logoSrc = `data:image/png;base64,${logo.toString("base64")}`;
 
   return new ImageResponse(
     (
@@ -37,9 +39,8 @@ export default async function OpengraphImage() {
         />
         <div style={{ position: "relative", display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 80px", color: "#fff" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 18, marginBottom: 36 }}>
-            <div style={{ width: 64, height: 64, border: "4px solid #f2b705", color: "#f2b705", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 30, fontWeight: 700 }}>
-              SC
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoSrc} alt="" width={72} height={72} style={{ borderRadius: 8, border: "2px solid rgba(242,183,5,0.6)" }} />
             <div style={{ fontSize: 34, fontWeight: 700, letterSpacing: 2 }}>SERRALHERIA CANADÁ</div>
           </div>
           <div style={{ fontSize: 96, fontWeight: 700, lineHeight: 1, textTransform: "uppercase" }}>Metal sob medida,</div>
