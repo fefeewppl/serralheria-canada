@@ -1,28 +1,84 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Barlow_Condensed, Inter } from "next/font/google";
+import { SITE } from "@/lib/site";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const barlow = Barlow_Condensed({
+  variable: "--font-barlow",
   subsets: ["latin"],
+  weight: ["500", "600", "700"],
 });
+
+const title = "Serralheria Canadá | Portões, Escadas, Grades e Locação de Containers em Avanhandava";
+const description =
+  "Serralheria em Avanhandava/SP desde 2016: portões sob medida, escadas, grades, estruturas metálicas e locação de containers para obras. Atendemos Penápolis, Barbosa, Promissão e região. Peça seu orçamento pelo WhatsApp.";
 
 export const metadata: Metadata = {
-  title: "Serralheria Canadá - Portões, Escadas, Estruturas Metálicas e Locação de Containers",
-  description: "Serralheria especializada em portões sob medida, escadas personalizadas, estruturas metálicas e locação de containers para obras. Desde 2016, transformamos metal em confiança.",
-  keywords: "serralheria, portões, escadas, estruturas metálicas, locação containers, Araçatuba",
-  authors: [{ name: "Serralheria Canadá" }],
+  metadataBase: new URL(SITE.url),
+  title,
+  description,
+  keywords: [
+    "serralheria Avanhandava",
+    "serralheria Penápolis",
+    "serralheria Barbosa",
+    "serralheria Promissão",
+    "portão sob medida",
+    "portão de garagem",
+    "escada metálica",
+    "grade de janela",
+    "estrutura metálica",
+    "locação de container",
+    "aluguel de container para obra",
+  ],
+  authors: [{ name: SITE.name }],
+  alternates: { canonical: "/" },
   openGraph: {
-    title: "Serralheria Canadá",
-    description: "Transformamos metal em confiança desde 2016 - (18) 98127-0860",
+    title: SITE.name,
+    description: `Portões, escadas, grades, estruturas metálicas e locação de containers desde ${SITE.since}. ${SITE.phone}`,
+    url: SITE.url,
+    siteName: SITE.name,
     type: "website",
     locale: "pt_BR",
   },
+  twitter: { card: "summary_large_image", title: SITE.name, description },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#121314",
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  name: SITE.name,
+  url: SITE.url,
+  image: `${SITE.url}/opengraph-image`,
+  telephone: SITE.phoneE164,
+  email: SITE.email,
+  foundingDate: String(SITE.since),
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: SITE.street,
+    addressLocality: SITE.city,
+    addressRegion: SITE.state,
+    addressCountry: "BR",
+  },
+  areaServed: SITE.citiesServed.map((name) => ({ "@type": "City", name })),
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+      opens: "08:00",
+      closes: "18:00",
+    },
+  ],
+  sameAs: [SITE.social.instagram, SITE.social.facebook],
 };
 
 export default function RootLayout({
@@ -32,9 +88,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${inter.variable} ${barlow.variable} font-sans`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         {children}
       </body>
     </html>

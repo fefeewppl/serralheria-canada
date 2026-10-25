@@ -10,11 +10,14 @@ export const createWhatsAppLink = (message: string) => {
 export const WHATSAPP_MESSAGES = {
   general: "Olá, vi o site da Serralheria Canadá e gostaria de um orçamento",
   container: "Olá, vi o site da Serralheria Canadá e gostaria de um orçamento de container",
-  contact: "Olá, vi o site da Serralheria Canadá e gostaria de mais informações"
+  contact: "Olá, vi o site da Serralheria Canadá e gostaria de mais informações",
 };
 
 export const WHATSAPP_LINKS = {
   general: createWhatsAppLink(WHATSAPP_MESSAGES.general),
   container: createWhatsAppLink(WHATSAPP_MESSAGES.container),
-  contact: createWhatsAppLink(WHATSAPP_MESSAGES.contact)
-}; 
+  contact: createWhatsAppLink(WHATSAPP_MESSAGES.contact),
+};
+
+export const serviceWhatsAppLink = (serviceTitle: string) =>
+  createWhatsAppLink(`Olá, vi o site da Serralheria Canadá e gostaria de um orçamento de ${serviceTitle.toLowerCase()}`);

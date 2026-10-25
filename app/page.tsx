@@ -1,690 +1,402 @@
-"use client";
-
 import Image from "next/image";
-import { 
-  Shield, 
-  Sparkles, 
-  Palette, 
-  Phone, 
-  Mail, 
-  MapPin, 
-  MessageCircle,
-  Facebook,
-  Instagram,
-  CheckCircle,
-  Star,
-  Calendar,
-  Wrench,
-  Truck,
-  Building2,
-  Container,
-  Menu,
-  X
-} from "lucide-react";
-import { useState, useEffect } from "react";
+import { ArrowRight, Check, Clock, Facebook, Instagram, Mail, MapPin, Phone, Plus } from "lucide-react";
+import Header from "@/components/Header";
+import Gallery from "@/components/Gallery";
+import QuoteForm from "@/components/QuoteForm";
+import { Logo, WhatsAppIcon } from "@/components/icons";
+import { CONTAINER, FAQ, SERVICES, SITE, STEPS, TESTIMONIALS } from "@/lib/site";
+import { WHATSAPP_LINKS, serviceWhatsAppLink } from "@/lib/whatsapp";
+
+const ext = { target: "_blank", rel: "noopener noreferrer" } as const;
+
+function SectionHead({ eyebrow, title, text, dark }: { eyebrow: string; title: string; text?: string; dark?: boolean }) {
+  return (
+    <div className="mb-12 flex flex-wrap items-end justify-between gap-6 md:mb-14">
+      <div>
+        <p className={`eyebrow ${dark ? "" : "!text-amber-dark"}`}>{eyebrow}</p>
+        <h2 className={`display mt-3.5 text-[clamp(38px,5vw,60px)] ${dark ? "text-white" : ""}`}>{title}</h2>
+      </div>
+      {text && <p className={`max-w-md ${dark ? "text-muted" : "text-muted-dark"}`}>{text}</p>}
+    </div>
+  );
+}
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+};
 
 export default function Home() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
-  // Fechar modal com ESC
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setSelectedImage(null);
-      }
-    };
-
-    if (selectedImage) {
-      document.addEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'hidden';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEsc);
-      document.body.style.overflow = 'unset';
-    };
-  }, [selectedImage]);
+  const year = new Date().getFullYear();
 
   return (
-    <div className="min-h-screen bg-black text-yellow-400">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-sm border-b border-yellow-400/20">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-yellow-400 rounded-lg flex items-center justify-center">
-                <span className="text-black font-bold text-lg">SC</span>
-              </div>
-              <div>
-                <h1 className="text-yellow-400 font-semibold text-lg elegant-title">Serralheria Canadá</h1>
-                <p className="text-yellow-400/70 text-xs">Desde 2016</p>
-              </div>
-            </div>
-
-            {/* Menu Desktop */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#inicio" className="text-yellow-400 hover:text-yellow-300 transition-colors">Início</a>
-              <a href="#sobre" className="text-yellow-400 hover:text-yellow-300 transition-colors">Sobre</a>
-              <a href="#servicos" className="text-yellow-400 hover:text-yellow-300 transition-colors">Serviços</a>
-              <a href="#containers" className="text-yellow-400 hover:text-yellow-300 transition-colors">Containers</a>
-              <a href="#projetos" className="text-yellow-400 hover:text-yellow-300 transition-colors">Projetos</a>
-              <a href="#contato" className="text-yellow-400 hover:text-yellow-300 transition-colors">Contato</a>
-            </nav>
-
-            {/* CTA Button Desktop */}
-            <a 
-              href="https://wa.me/5518981270860?text=Olá%2C%20vi%20o%20site%20da%20Serralheria%20Canadá%20e%20gostaria%20de%20um%20orçamento"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden md:block bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition-colors sparkle"
-            >
-              Orçamento
+    <>
+      {/* Barra superior */}
+      <div className="border-b border-white/10 bg-ink-3 text-[13px] text-muted">
+        <div className="mx-auto flex max-w-[1180px] justify-between gap-4 px-4 py-2 md:px-6">
+          <span className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5" /> {SITE.citiesServed.join(" · ")} e região
+          </span>
+          <span className="hidden items-center gap-4 md:flex">
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5" /> Seg–Sex 8h às 18h
+            </span>
+            <a href={`tel:${SITE.phoneE164}`} className="flex items-center gap-1.5 hover:text-amber">
+              <Phone className="h-3.5 w-3.5" /> {SITE.phone}
             </a>
-
-            {/* Menu Mobile Button */}
-            <button 
-              className="md:hidden text-yellow-400 hover:text-yellow-300 transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-
-          {/* Menu Mobile */}
-          {isMenuOpen && (
-            <div className="md:hidden mt-4 pb-4 border-t border-yellow-400/20 pt-4">
-              <nav className="flex flex-col space-y-4">
-                <a 
-                  href="#inicio" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Início
-                </a>
-                <a 
-                  href="#sobre" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Sobre
-                </a>
-                <a 
-                  href="#servicos" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Serviços
-                </a>
-                <a 
-                  href="#containers" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Containers
-                </a>
-                <a 
-                  href="#projetos" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Projetos
-                </a>
-                <a 
-                  href="#contato" 
-                  className="text-yellow-400 hover:text-yellow-300 transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Contato
-                </a>
-                <a 
-                  href="https://wa.me/5518981270860?text=Olá%2C%20vi%20o%20site%20da%20Serralheria%20Canadá%20e%20gostaria%20de%20um%20orçamento"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-yellow-400 text-black px-6 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition-colors sparkle w-fit"
-                >
-                  Orçamento
-                </a>
-              </nav>
-            </div>
-          )}
+          </span>
         </div>
-      </header>
+      </div>
 
-      {/* Hero Section */}
-      <section id="inicio" className="pt-24 pb-16 industrial-bg metal-texture">
-        <div className="container mx-auto px-4">
-          <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-4xl md:text-6xl hero-title text-yellow-400 mb-6">
-              Bem-vindo à Serralheria Canadá
+      <Header />
+
+      <main>
+        {/* HERO */}
+        <section id="inicio" className="relative flex min-h-[calc(100svh-110px)] flex-col overflow-hidden">
+          <div className="absolute inset-y-0 right-0 hidden w-[58%] lg:block">
+            <Image
+              src="/equipe.webp"
+              alt="Equipe da Serralheria Canadá"
+              fill
+              priority
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="object-cover object-[50%_30%]"
+            />
+          </div>
+          {/* Desktop: foto à direita com degradê do lado do texto. No celular a foto aparece abaixo dos botões. */}
+          <div className="absolute inset-0 hidden bg-gradient-to-r from-[#0c0d0e] from-[42%] via-[#0c0d0e]/60 via-[55%] to-transparent to-[75%] lg:block" />
+          <div className="relative mx-auto flex w-full max-w-[1180px] flex-1 flex-col justify-center px-4 py-20 md:px-6">
+            <p className="eyebrow">Serralheria &amp; locação de containers</p>
+            <h1 className="display my-6 max-w-3xl text-[clamp(48px,7.5vw,96px)] text-white">
+              Metal sob medida,
+              <br />
+              <span className="text-amber">feito para durar.</span>
             </h1>
-            <p className="text-lg md:text-xl elegant-subtitle text-yellow-400/80 mb-12">
-              Cada projeto é feito com técnica, cuidado e compromisso com a durabilidade.
+            <p className="mb-10 max-w-xl text-lg text-[#c9c7c2] md:text-[19px]">
+              Portões, escadas, grades e estruturas metálicas com acabamento de alto padrão — e containers para a sua
+              obra, com entrega e retirada.
             </p>
-            
-            {/* Diferenciais */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-              <div className="flex items-center space-x-3">
-                <Shield className="w-8 h-8 text-yellow-400" />
-                <span className="text-yellow-400 font-semibold">Segurança real</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Sparkles className="w-8 h-8 text-yellow-400" />
-                <span className="text-yellow-400 font-semibold">Acabamento impecável</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <Palette className="w-8 h-8 text-yellow-400" />
-                <span className="text-yellow-400 font-semibold">Design que valoriza seu espaço</span>
-              </div>
+            <div className="flex flex-wrap gap-3.5">
+              <a href={WHATSAPP_LINKS.general} {...ext} className="btn btn-primary">
+                <WhatsAppIcon className="h-5 w-5" /> Pedir orçamento no WhatsApp
+              </a>
+              <a href="#projetos" className="btn btn-ghost">
+                Ver projetos <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
-
-            <a 
-              href="https://wa.me/5518981270860?text=Olá%2C%20vi%20o%20site%20da%20Serralheria%20Canadá%20e%20gostaria%20de%20um%20orçamento"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block bg-yellow-400 text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-300 transition-all duration-300 neon-border"
-            >
-              Solicite um Orçamento
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* Nossa História */}
-      <section id="sobre" className="py-16 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl section-title text-yellow-400 mb-8">
-              Nossa História
-            </h2>
-            <div className="bg-black/50 p-8 rounded-lg border border-yellow-400/20">
-              <p className="text-xl elegant-title text-yellow-400 mb-6">
-                "Transformamos metal em confiança."
-              </p>
-              <p className="text-yellow-400/80 elegant-body mb-6">
-                Desde 2016, a Serralheria Canadá tem se dedicado a criar soluções metálicas 
-                que combinam funcionalidade, segurança e design. Nossa experiência abrange 
-                desde portões e escadas até estruturas metálicas complexas.
-              </p>
-              <p className="text-yellow-400/80 elegant-body">
-                Agora também oferecemos <span className="text-yellow-400 font-medium">locação de containers</span> para obras, 
-                garantindo durabilidade, praticidade e segurança em seus projetos.
-              </p>
+            <div className="relative mt-10 aspect-[4/3] overflow-hidden rounded-md lg:hidden">
+              <Image
+                src="/equipe.webp"
+                alt="Equipe da Serralheria Canadá"
+                fill
+                sizes="100vw"
+                className="object-cover object-[50%_45%]"
+              />
             </div>
           </div>
-        </div>
-      </section>
+          <div className="relative border-t border-white/10 bg-[#0c0d0e]/75 backdrop-blur">
+            <dl className="mx-auto grid max-w-[1180px] grid-cols-2 px-4 md:grid-cols-4 md:px-6">
+              {[
+                [String(SITE.since), `Desde, em ${SITE.city}`],
+                ["100%", "Projetos sob medida"],
+                ["Medição", "No local, antes do orçamento"],
+                ["Containers", "Com entrega e retirada"],
+              ].map(([value, label], i) => (
+                <div key={label} className={`py-5 ${i % 2 ? "pl-5 border-l border-white/10" : ""} ${i === 2 ? "md:pl-5 md:border-l md:border-white/10" : ""}`}>
+                  <dt className="sr-only">{label}</dt>
+                  <dd>
+                    <span className="block font-display text-3xl font-bold leading-none text-white md:text-[34px]">{value}</span>
+                    <span className="text-[13px] text-muted">{label}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        </section>
 
-      {/* Serviços */}
-      <section id="servicos" className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 text-center mb-16">
-            Nossos Serviços
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Portões */}
-            <div className="bg-gray-900 p-6 rounded-lg border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Building2 className="w-8 h-8 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-3">Portões sob medida</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Portões personalizados que combinam segurança e estética para sua propriedade.</p>
-            </div>
-
-            {/* Escadas */}
-            <div className="bg-gray-900 p-6 rounded-lg border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Wrench className="w-8 h-8 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-3">Escadas personalizadas</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Escadas metálicas funcionais e elegantes para diversos ambientes.</p>
-            </div>
-
-            {/* Estruturas */}
-            <div className="bg-gray-900 p-6 rounded-lg border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300">
-              <div className="w-16 h-16 bg-yellow-400/10 rounded-lg flex items-center justify-center mb-4">
-                <Truck className="w-8 h-8 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-3">Estruturas metálicas</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Estruturas robustas e duráveis para projetos industriais e comerciais.</p>
+        {/* SERVIÇOS */}
+        <section id="servicos" className="bg-paper py-20 text-[#1d1d1b] md:py-28">
+          <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+            <SectionHead
+              eyebrow="O que fazemos"
+              title="Nossos serviços"
+              text="Cada projeto é medido, desenhado e fabricado para o seu espaço — com técnica, cuidado e compromisso com a durabilidade."
+            />
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {SERVICES.map((s, i) => (
+                <article
+                  key={s.id}
+                  className="group flex flex-col overflow-hidden rounded-md border border-black/10 bg-white transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_40px_-20px_rgba(0,0,0,0.3)]"
+                >
+                  <div className="relative aspect-[4/3] overflow-hidden">
+                    <Image src={s.image} alt={s.title} fill sizes="(min-width:1024px) 25vw, (min-width:640px) 50vw, 100vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
+                  </div>
+                  <div className="flex flex-1 flex-col p-6">
+                    <span className="font-display text-sm font-semibold tracking-widest text-amber-dark">0{i + 1}</span>
+                    <h3 className="display mb-2.5 mt-1.5 text-[26px]">{s.title}</h3>
+                    <p className="mb-4 text-[15px] text-muted-dark">{s.description}</p>
+                    <ul className="mb-6 space-y-1.5 text-sm">
+                      {s.items.map((item) => (
+                        <li key={item} className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-amber-dark" /> {item}
+                        </li>
+                      ))}
+                    </ul>
+                    <a href={serviceWhatsAppLink(s.title)} {...ext} className="mt-auto inline-flex items-center gap-2 self-start border-b-2 border-amber pb-0.5 text-sm font-semibold">
+                      Solicitar orçamento <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </div>
+                </article>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Locação de Containers */}
-      <section id="containers" className="py-16 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 text-center mb-8">
-            Locação de Containers
-          </h2>
-          <p className="text-yellow-400/80 text-center elegant-body mb-12 max-w-3xl mx-auto">
-            Containers robustos e seguros para suas obras. Durabilidade, praticidade e confiança em um só lugar.
-          </p>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Imagem do Container */}
+        {/* SOBRE */}
+        <section id="sobre" className="py-20 md:py-28">
+          <div className="mx-auto grid max-w-[1180px] items-center gap-14 px-4 md:px-6 lg:grid-cols-2 lg:gap-20">
             <div className="relative">
-              <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-                <div 
-                  className="h-80 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                  onClick={() => setSelectedImage("/container.jpg")}
-                >
-                  <Image 
-                    src="/container.jpg" 
-                    alt="Container para locação - Serralheria Canadá" 
-                    width={400} 
-                    height={320}
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
+              <div className="relative aspect-[4/5] overflow-hidden rounded-md">
+                <Image src="/portoes/portao-residencial.jpg" alt="Portão fabricado pela Serralheria Canadá" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" />
+              </div>
+              <div className="absolute -bottom-6 right-4 rounded-md bg-amber px-6 py-5 text-black lg:-right-6 lg:bottom-10">
+                <span className="block font-display text-5xl font-bold leading-none">+{year - SITE.since}</span>
+                <span className="text-xs font-semibold uppercase tracking-widest">anos de oficina</span>
               </div>
             </div>
-
-            {/* Informações do Container */}
-            <div className="space-y-6">
-              <div className="bg-black/50 p-6 rounded-lg border border-yellow-400/20">
-                <h3 className="text-2xl font-semibold text-yellow-400 mb-4 card-title">
-                  Container para Obras
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start space-x-3">
-                    <Shield className="w-6 h-6 text-yellow-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="text-yellow-400 font-medium mb-1">Segurança Garantida</h4>
-                      <p className="text-yellow-400/70 elegant-body text-sm">Estrutura robusta e resistente para proteger seus materiais e equipamentos.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Truck className="w-6 h-6 text-yellow-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="text-yellow-400 font-medium mb-1">Entrega e Retirada</h4>
-                      <p className="text-yellow-400/70 elegant-body text-sm">Serviço completo de entrega no local da obra e retirada após o uso.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Calendar className="w-6 h-6 text-yellow-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="text-yellow-400 font-medium mb-1">Flexibilidade de Prazo</h4>
-                      <p className="text-yellow-400/70 elegant-body text-sm">Locação por períodos flexíveis, adaptados às necessidades do seu projeto.</p>
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <Sparkles className="w-6 h-6 text-yellow-400 mt-1 flex-shrink-0" />
-                    <div>
-                      <h4 className="text-yellow-400 font-medium mb-1">Qualidade Premium</h4>
-                      <p className="text-yellow-400/70 elegant-body text-sm">Containers em excelente estado de conservação e manutenção regular.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* CTA para Container */}
-              <div className="text-center">
-                <a 
-                  href="https://wa.me/5518981270860?text=Olá%2C%20vi%20o%20site%20da%20Serralheria%20Canadá%20e%20gostaria%20de%20um%20orçamento%20de%20container"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block bg-yellow-400 text-black px-8 py-3 rounded-lg font-semibold hover:bg-yellow-300 transition-all duration-300 neon-border"
-                >
-                  Solicitar Orçamento de Container
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Portfólio */}
-      <section id="projetos" className="py-16 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 text-center mb-8">
-            Projetos Recentes
-          </h2>
-          <p className="text-yellow-400/80 text-center elegant-body mb-12 max-w-2xl mx-auto">
-            Projetos finalizados que combinam segurança, acabamento e design funcional.
-          </p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Portão Principal */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/portoes/portao-principal.jpg")}
-              >
-                <Image 
-                  src="/portoes/portao-principal.jpg" 
-                  alt="Portão principal metálico" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Grade de Piscina */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/grades/grade-piscina.jpg")}
-              >
-                <Image 
-                  src="/grades/grade-piscina.jpg" 
-                  alt="Grade de segurança para piscina" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Escada Interna */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/escadas/escada-interna.jpg")}
-              >
-                <Image 
-                  src="/escadas/escada-interna.jpg" 
-                  alt="Escada interna moderna" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Corrimão Decorativo */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/escadas/corrimao-decorativo.jpg")}
-              >
-                <Image 
-                  src="/escadas/corrimao-decorativo.jpg" 
-                  alt="Corrimão decorativo metálico" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Grade Residencial */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/grades/grade-residencial.jpg")}
-              >
-                <Image 
-                  src="/grades/grade-residencial.jpg" 
-                  alt="Grade residencial metálica" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-
-            {/* Container para Locação */}
-            <div className="bg-black/50 rounded-lg overflow-hidden border border-yellow-400/20 hover:border-yellow-400/40 transition-all duration-300 cursor-pointer group">
-              <div 
-                className="h-48 bg-gradient-to-br from-yellow-400/20 to-yellow-400/5 flex items-center justify-center overflow-hidden"
-                onClick={() => setSelectedImage("/portoes/portao6.jpg")}
-              >
-                <Image 
-                  src="/portoes/portao6.jpg" 
-                  alt="Grade residencial metálica" 
-                  width={192} 
-                  height={192}
-                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Diferenciais */}
-      <section className="py-16 bg-black">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 text-center mb-16">
-            Nossos Diferenciais
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="text-center">
-              <div className="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-10 h-10 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-2">Segurança contra o tempo</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Materiais de qualidade que resistem ao tempo.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Sparkles className="w-10 h-10 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-2">Acabamento de alto padrão</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Detalhes que fazem a diferença.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Palette className="w-10 h-10 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-2">Design funcional</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Beleza e funcionalidade em harmonia.</p>
-            </div>
-
-            <div className="text-center">
-              <div className="w-20 h-20 bg-yellow-400/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-10 h-10 text-yellow-400" />
-              </div>
-              <h3 className="text-lg card-title text-yellow-400 mb-2">Atendimento próximo</h3>
-              <p className="text-yellow-400/70 elegant-body text-sm">Suporte personalizado e dedicado.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Depoimentos */}
-      <section className="py-16 bg-gray-900">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 text-center mb-16">
-            Depoimentos de Clientes
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-black/50 p-6 rounded-lg border border-yellow-400/20">
-              <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-yellow-400/80 mb-4 elegant-body">
-                "Excelente trabalho! O portão ficou perfeito e a equipe foi muito profissional."
-              </p>
-              <div>
-                <p className="text-yellow-400 font-semibold">Magali Marinho</p>
-                <p className="text-yellow-400/60 text-sm">Avanhandava, SP</p>
-              </div>
-            </div>
-
-            <div className="bg-black/50 p-6 rounded-lg border border-yellow-400/20">
-              <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-yellow-400/80 mb-4 elegant-body">
-                "Contratei para alugar containers e fiquei muito satisfeito com a qualidade."
-              </p>
-              <div>
-                <p className="text-yellow-400 font-semibold">João Spina</p>
-                <p className="text-yellow-400/60 text-sm">Penápolis, SP</p>
-              </div>
-            </div>
-
-            <div className="bg-black/50 p-6 rounded-lg border border-yellow-400/20">
-              <div className="flex items-center mb-4">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <Star key={star} className="w-5 h-5 text-yellow-400 fill-current" />
-                ))}
-              </div>
-              <p className="text-yellow-400/80 mb-4 elegant-body">
-                "Estrutura metálica de primeira qualidade. Recomendo para todos!"
-              </p>
-              <div>
-                <p className="text-yellow-400 font-semibold">Tamara Cristina</p>
-                <p className="text-yellow-400/60 text-sm">Avanhandava, SP</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="py-16 bg-black">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl section-title text-yellow-400 mb-8">
-            Pronto para transformar seu espaço?
-          </h2>
-          <p className="text-lg elegant-body text-yellow-400/80 mb-8 max-w-2xl mx-auto">
-            Pronto para transformar seu espaço ou alugar um container com confiança?
-          </p>
-          <a 
-            href="https://wa.me/5518981270860?text=Olá%2C%20vi%20o%20site%20da%20Serralheria%20Canadá%20e%20gostaria%20de%20um%20orçamento"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-block bg-yellow-400 text-black px-8 py-4 rounded-lg font-bold text-lg hover:bg-yellow-300 transition-all duration-300 neon-border"
-          >
-            Fale com a gente agora
-          </a>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer id="contato" className="bg-black border-t border-yellow-400/20">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Contato */}
             <div>
-              <h3 className="text-yellow-400 font-bold text-lg mb-4">Contato</h3>
-              <div className="space-y-2">
-                                 <div className="flex items-center space-x-2">
-                   <Phone className="w-4 h-4 text-yellow-400" />
-                   <span className="text-gray-300">(18) 98127-0860</span>
-                 </div>
-                                 <div className="flex items-center space-x-2">
-                   <MessageCircle className="w-4 h-4 text-yellow-400" />
-                   <span className="text-gray-300">(18) 98127-0860</span>
-                 </div>
-                                 <div className="flex items-center space-x-2">
-                   <Mail className="w-4 h-4 text-yellow-400" />
-                   <span className="text-gray-300">serralheriacanada@gmail.com</span>
-                 </div>
-                                 <div className="flex items-center space-x-2">
-                   <MapPin className="w-4 h-4 text-yellow-400" />
-                   <span className="text-gray-300">Avanhandava, SP</span>
-                 </div>
-              </div>
-            </div>
-
-            {/* Serviços */}
-            <div>
-              <h3 className="text-yellow-400 font-bold text-lg mb-4">Serviços</h3>
-              <ul className="space-y-2 text-gray-300">
-                <li>Portões sob medida</li>
-                <li>Escadas personalizadas</li>
-                <li>Estruturas metálicas</li>
+              <p className="eyebrow">Nossa história</p>
+              <p className="display my-5 text-[34px] leading-[1.1] text-white">“Transformamos metal em confiança.”</p>
+              <p className="mb-4 text-muted">
+                Desde {SITE.since}, a {SITE.name} cria soluções metálicas que combinam funcionalidade, segurança e design
+                — de portões e escadas a estruturas metálicas complexas.
+              </p>
+              <p className="text-muted">
+                Hoje também oferecemos locação de containers para obras, com a mesma seriedade no atendimento que nossos
+                clientes conhecem.
+              </p>
+              <ul className="mt-8 grid gap-3.5 sm:grid-cols-2">
+                {["Materiais de qualidade", "Acabamento de alto padrão", "Design funcional", "Atendimento próximo"].map((d) => (
+                  <li key={d} className="flex items-center gap-2.5 font-medium text-[#ddd]">
+                    <Check className="h-5 w-5 shrink-0 text-amber" /> {d}
+                  </li>
+                ))}
               </ul>
             </div>
+          </div>
+        </section>
 
-            {/* Containers */}
-            <div>
-              <h3 className="text-yellow-400 font-bold text-lg mb-4">Containers</h3>
-              <ul className="space-y-2 text-gray-300">
-                <li>Locação de containers</li>
-                <li>Entrega e retirada</li>
-                <li>Flexibilidade de prazo</li>
-                <li>Qualidade premium</li>
-              </ul>
-            </div>
-
-            {/* Horário */}
-            <div>
-              <h3 className="text-yellow-400 font-bold text-lg mb-4">Horário de Atendimento</h3>
-              <div className="space-y-2 text-gray-300">
-                <p>Segunda a Sexta: 8h às 18h</p>
-              {/*  <p>Sábado: 8h às 12h</p>*/}
-                <p>Domingo: Fechado</p>
+        {/* CONTAINERS */}
+        <section id="containers" className="bg-ink-2 py-20 md:py-28">
+          <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+            <div className="grid overflow-hidden rounded-md border border-white/10 lg:grid-cols-[1.1fr_1fr]">
+              <div className="relative min-h-[320px] lg:min-h-[480px]">
+                <Image src={CONTAINER.image} alt="Container para locação em obras" fill sizes="(min-width:1024px) 55vw, 100vw" className="object-cover" />
               </div>
-            </div>
-
-            {/* Redes Sociais */}
-            <div>
-              <h3 className="text-yellow-400 font-bold text-lg mb-4">Redes Sociais</h3>
-              <div className="flex space-x-4">
-                <a 
-                  href="https://www.facebook.com/SerralheriaaCanada" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-yellow-400 transition-colors"
-                >
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a 
-                  href="https://www.instagram.com/serralheria.canada/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-gray-300 hover:text-yellow-400 transition-colors"
-                >
-                  <Instagram className="w-6 h-6" />
+              <div className="p-6 md:p-12">
+                <p className="eyebrow">Locação</p>
+                <h2 className="display mb-3.5 mt-3 text-4xl text-white md:text-[44px]">Containers para obras</h2>
+                <p className="mb-8 text-muted">
+                  Robustos e seguros para guardar materiais e equipamentos. Durabilidade, praticidade e confiança em um só
+                  lugar.
+                </p>
+                <div className="mb-9 grid gap-6 sm:grid-cols-2">
+                  {CONTAINER.features.map((f) => (
+                    <div key={f.title}>
+                      <i className="mb-3 block h-0.5 w-8 bg-amber" />
+                      <b className="mb-1 block font-semibold text-white">{f.title}</b>
+                      <span className="text-sm text-muted">{f.text}</span>
+                    </div>
+                  ))}
+                </div>
+                <a href={WHATSAPP_LINKS.container} {...ext} className="btn btn-primary">
+                  <WhatsAppIcon className="h-5 w-5" /> Consultar disponibilidade
                 </a>
               </div>
             </div>
           </div>
+        </section>
 
-          <div className="border-t border-yellow-400/20 mt-8 pt-8 text-center">
-            <p className="text-gray-300">
-              © 2025 - Serralheria Canadá. Todos os direitos reservados.
-            </p>
+        {/* PROCESSO */}
+        <section className="bg-paper py-20 text-[#1d1d1b] md:py-28">
+          <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+            <SectionHead eyebrow="Como trabalhamos" title="Do orçamento à instalação" text="Um processo simples e transparente, com você acompanhando cada etapa." />
+            <ol className="grid gap-8 border-t border-black/10 sm:grid-cols-2 lg:grid-cols-4">
+              {STEPS.map((s, i) => (
+                <li key={s.title} className="pt-8">
+                  <span className="font-display text-6xl font-bold leading-none text-amber-dark">0{i + 1}</span>
+                  <h3 className="display mb-2 mt-3 text-2xl">{s.title}</h3>
+                  <p className="text-[15px] text-muted-dark">{s.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* PROJETOS */}
+        <section id="projetos" className="py-20 md:py-28">
+          <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+            <SectionHead dark eyebrow="Portfólio" title="Projetos recentes" text="Trabalhos entregues em Avanhandava, Penápolis e região. Clique para ampliar." />
+            <Gallery />
+          </div>
+        </section>
+
+        {/* DEPOIMENTOS */}
+        <section className="bg-paper py-20 text-[#1d1d1b] md:py-28">
+          <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+            <SectionHead eyebrow="Depoimentos" title="Quem contratou, recomenda" />
+            <div className="grid gap-6 md:grid-cols-3">
+              {TESTIMONIALS.map((t) => (
+                <figure key={t.name} className="flex flex-col rounded-md border border-black/10 bg-white p-8">
+                  <div className="mb-4 tracking-[3px] text-amber-dark" aria-label="5 de 5 estrelas">★★★★★</div>
+                  <blockquote className="mb-6 flex-1 text-[17px] text-[#2a2a28]">“{t.quote}”</blockquote>
+                  <figcaption className="flex items-center gap-3 border-t border-black/10 pt-5">
+                    <span className="grid h-10 w-10 place-items-center rounded-full bg-ink text-sm font-semibold text-amber">
+                      {t.name.split(" ").map((n) => n[0]).slice(0, 2).join("")}
+                    </span>
+                    <span>
+                      <b className="block text-[15px]">{t.name}</b>
+                      <span className="text-[13px] text-muted-dark">{t.city}</span>
+                    </span>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section id="duvidas" className="py-20 md:py-28">
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+          <div className="mx-auto grid max-w-[1180px] gap-12 px-4 md:px-6 lg:grid-cols-[1fr_1.4fr]">
+            <div>
+              <p className="eyebrow">Dúvidas frequentes</p>
+              <h2 className="display mb-5 mt-3.5 text-[clamp(38px,5vw,56px)] text-white">Perguntas frequentes</h2>
+              <p className="mb-8 text-muted">Não encontrou o que procurava? Fale direto com a gente.</p>
+              <a href={WHATSAPP_LINKS.contact} {...ext} className="btn btn-ghost">
+                <WhatsAppIcon className="h-5 w-5" /> Tirar dúvida no WhatsApp
+              </a>
+            </div>
+            <div className="divide-y divide-white/10 border-y border-white/10">
+              {FAQ.map((f) => (
+                <details key={f.q} className="group py-5">
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-6 text-lg font-medium text-white [&::-webkit-details-marker]:hidden">
+                    {f.q}
+                    <Plus className="h-5 w-5 shrink-0 text-amber transition-transform group-open:rotate-45" />
+                  </summary>
+                  <p className="mt-3 pr-10 text-muted">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CONTATO */}
+        <section id="contato" className="bg-amber py-20 text-black md:py-24">
+          <div className="mx-auto grid max-w-[1180px] items-start gap-12 px-4 md:px-6 lg:grid-cols-2">
+            <div>
+              <p className="eyebrow !text-black">Contato</p>
+              <h2 className="display mb-6 mt-3.5 text-[clamp(38px,5vw,60px)]">Tem um projeto em mente? Vamos tirar do papel.</h2>
+              <ul className="mb-8 space-y-3 text-[17px] font-medium">
+                <li>
+                  <a href={`tel:${SITE.phoneE164}`} className="inline-flex items-center gap-3 hover:underline">
+                    <Phone className="h-5 w-5" /> {SITE.phone}
+                  </a>
+                </li>
+                <li>
+                  <a href={`mailto:${SITE.email}`} className="inline-flex items-center gap-3 break-all hover:underline">
+                    <Mail className="h-5 w-5 shrink-0" /> {SITE.email}
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(SITE.mapQuery)}`}
+                    {...ext}
+                    className="inline-flex items-center gap-3 hover:underline"
+                  >
+                    <MapPin className="h-5 w-5 shrink-0" /> {SITE.street} — {SITE.city}, {SITE.state}
+                  </a>
+                </li>
+                <li className="flex items-center gap-3">
+                  <Clock className="h-5 w-5" /> Segunda a sexta, 8h às 18h
+                </li>
+              </ul>
+              <div className="overflow-hidden rounded-md border-2 border-black/10">
+                <iframe
+                  title={`Mapa — ${SITE.name}`}
+                  src={`https://www.google.com/maps?q=${encodeURIComponent(SITE.mapQuery)}&output=embed`}
+                  className="h-64 w-full"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+            <QuoteForm />
+          </div>
+        </section>
+      </main>
+
+      {/* RODAPÉ */}
+      <footer className="bg-ink-3 pb-8 pt-16 text-sm text-muted md:pt-20">
+        <div className="mx-auto max-w-[1180px] px-4 md:px-6">
+          <div className="mb-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+            <div>
+              <Logo />
+              <p className="mt-5 max-w-xs">Serralheria e locação de containers em {SITE.city} e região desde {SITE.since}.</p>
+              <p className="mt-3 flex items-start gap-2">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0" /> {SITE.street}, {SITE.city} - {SITE.state}
+              </p>
+              <div className="mt-5 flex gap-3">
+                <a href={SITE.social.instagram} {...ext} aria-label="Instagram" className="grid h-10 w-10 place-items-center rounded-full border border-white/15 hover:border-amber hover:text-amber">
+                  <Instagram className="h-4 w-4" />
+                </a>
+                <a href={SITE.social.facebook} {...ext} aria-label="Facebook" className="grid h-10 w-10 place-items-center rounded-full border border-white/15 hover:border-amber hover:text-amber">
+                  <Facebook className="h-4 w-4" />
+                </a>
+              </div>
+            </div>
+            <div>
+              <h3 className="display mb-4 text-lg tracking-wide text-white">Serviços</h3>
+              <ul className="space-y-2.5">
+                {SERVICES.map((s) => (
+                  <li key={s.id}><a href="#servicos" className="hover:text-amber">{s.title}</a></li>
+                ))}
+                <li><a href="#containers" className="hover:text-amber">Locação de containers</a></li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="display mb-4 text-lg tracking-wide text-white">Atendemos</h3>
+              <ul className="space-y-2.5">
+                {SITE.citiesServed.map((c) => <li key={c}>{c}</li>)}
+                <li>e região</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="display mb-4 text-lg tracking-wide text-white">Horário</h3>
+              <ul className="space-y-2.5">
+                {SITE.hours.map((h) => (
+                  <li key={h.label}>{h.label}: {h.value}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-between gap-3 border-t border-white/10 pt-6 text-[13px]">
+            <span>© {year} {SITE.name}. Todos os direitos reservados.</span>
+            <a href={`tel:${SITE.phoneE164}`} className="hover:text-amber">{SITE.phone}</a>
           </div>
         </div>
       </footer>
 
-      {/* Modal para visualizar imagens */}
-      {selectedImage && (
-        <div 
-          className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={() => setSelectedImage(null)}
-        >
-          <div className="relative max-w-4xl max-h-full">
-            <button
-              onClick={() => setSelectedImage(null)}
-              className="absolute -top-12 right-0 text-yellow-400 hover:text-yellow-300 transition-colors z-10"
-            >
-              <X className="w-8 h-8" />
-            </button>
-            <div className="relative">
-              <Image 
-                src={selectedImage} 
-                alt="Visualização ampliada" 
-                width={800} 
-                height={600}
-                className="max-w-full max-h-[80vh] object-contain rounded-lg"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+      {/* WhatsApp flutuante */}
+      <a
+        href={WHATSAPP_LINKS.general}
+        {...ext}
+        aria-label="Falar no WhatsApp"
+        className="fixed bottom-5 right-5 z-[60] grid h-14 w-14 place-items-center rounded-full bg-[#25d366] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition-transform hover:scale-105 md:h-16 md:w-16"
+      >
+        <WhatsAppIcon className="h-8 w-8" />
+      </a>
+    </>
   );
 }
